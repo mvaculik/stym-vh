@@ -26,7 +26,7 @@
     }
 
     function goToGameTwo() {
-        goto(ROUTES.GAME_TWO);
+        //goto(ROUTES.GAME_TWO);
     }
 
 
@@ -40,10 +40,16 @@
     <div class="max-w-6xl mx-auto mt-24">
         <div class="flex gap-4">
             <button class="bg-blue-500 text-white p-2 rounded" on:click={goToGameOne}>
-                Hra 1
+                Game 1
             </button>
             <button class="bg-green-500 text-white p-2 rounded" on:click={goToGameTwo}>
-                Hra 2
+                Game 2
+            </button>
+            <button class="bg-purple-500 text-white p-2 rounded" on:click={goToGameTwo}>
+                Game 3
+            </button>
+            <button class="bg-yellow-500 text-white p-2 rounded" on:click={goToGameTwo}>
+                Game 4
             </button>
         </div>
     </div>

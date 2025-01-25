@@ -8,8 +8,9 @@
 
     $: user = $authStore.user as User;
     $: isAuthenticated = $authStore.isAuthenticated;
+    let isDownloaded = false;
 
-    onMount(() => {
+    onMount(async () => {
         // Initialize auth store
         authStore.initialize();
 
@@ -18,6 +19,15 @@
             goto(ROUTES.LOGIN);
         } else {
             console.log(user.userId);
+
+            // Kontrola, zda je hra již stažena
+            const response = await fetch(`http://localhost:3000/api/games/library/check/${user.userId}/1`, {
+                headers: {
+                    'Authorization': `Bearer ${$authStore.token}`,
+                },
+            });
+            const data = await response.json();
+            isDownloaded = data.exists;
         }
     });
 
@@ -56,21 +66,30 @@
 <style>
   .button { padding: 10px 20px; border-radius: 5px; font-size: 16px; cursor: pointer; }
   .download { background-color: #1d4ed8; color: white; border: none; }
-  .start { background-color: #10b981; color: white; border: none; }
+  .start { background-color: #10b981; color: white; border: none; cursor: default; }
   .back { background-color: #6b7280; color: white; border: none; }
   .button:hover { opacity: 0.9; }
+  .button.start:hover { opacity: 1; }
+  p {text-align: center;}
   .container { display: flex; flex-direction: column; align-items: center; gap: 20px; margin-top: 50px; }
 </style>
 
 <div class="container">
-    <h1 class="text-white">Hra 1</h1>
-    <p class="text-gray-300">Tato hra je připravena ke stažení a spuštění.</p>
+    <h1 class="text-white">GAME 1: Shadow Quest</h1>
+    <p class="text-gray-300">Step into the mysterious world of Shadow Quest, an action-packed RPG where you uncover ancient secrets, battle shadowy foes, and forge alliances to save a crumbling kingdom. Explore a richly detailed open world, master unique abilities, and make choices that shape your destiny. Will you embrace the light or succumb to the shadows? The choice is yours..</p>
 
-    <button on:click={() => downloadGame(user.userId)} class="button download">
-      Stáhnout Hru 1
-    </button>
+    {#if isDownloaded}
+        <button disabled class="button start">
+            Downloaded
+        </button>
+    {:else}
+        <button on:click={() => downloadGame(user.userId)} class="button download">
+            Download
+        </button>
+    {/if}
 
     <button on:click={() => window.history.back()} class="button back">
-        Zpět
+        Back
     </button>
 </div>
+

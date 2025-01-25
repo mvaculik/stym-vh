@@ -37,6 +37,16 @@
     });
 </script>
 
+<style>
+  .uninstall { background: red; color: #fff; padding: 3px 8px; border-radius: 3px; font-size: 12px; cursor: pointer;}
+  .uninstall:hover { opacity: 0.9;}
+  .run { background: rgb(0, 85, 255); color: #fff; padding: 3px 8px; border-radius: 3px; font-size: 12px; cursor: pointer;}
+  .run:hover { opacity: 0.9;}
+  .game-title {margin-bottom: 10px; font-size: 21px;}
+  .game-box {padding: 20px; background: color(srgb 0.0644 0.095 0.1537);}
+  .manage {display: flex; flex-direction: row; align-items: center; justify-content: flex-start; gap: 11px;}
+</style>
+
 <main class="min-h-screen bg-gray-800 p-4">
     <!-- Top Navigation Bar -->
     <Navbar />
@@ -47,11 +57,16 @@
         
             <ul class="mt-4">
                 {#each userGames as game}
-                    <li class="p-2 border border-gray-700 rounded mt-2 text-white">
-                        <p>{game.game_title}</p>
+                    <li class="game-box text-white p-2 border border-gray-700 rounded mt-2 text-white">
+                        <p class="game-title">{game.game_title}</p>
+                        <div class="manage">
                          <button class="button run">
-                            Spustit hru
+                            Start the game
                         </button>
+                        <button class="button uninstall">
+                            Uninstall
+                        </button>
+                        </div>
                     </li>
                 {/each}
             </ul>
