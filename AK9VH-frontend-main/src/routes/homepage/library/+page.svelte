@@ -23,6 +23,22 @@
         }
     }
 
+    async function uninstallGame(gameId: number) {
+        try {
+            const response = await fetch(`http://localhost:3000/api/games/uninstall/${user.userId}/${gameId}`, {
+                method: 'DELETE',
+            });
+            if (response) {
+                userGames = userGames.filter(game => game.id !== gameId);
+            } else {
+                console.error('Failed to uninstall game.');
+            }
+        } catch (error) {
+            console.error('Error uninstalling game:', error);
+        }
+    }
+
+
     onMount(() => {
         // Initialize auth store
         authStore.initialize();
@@ -63,7 +79,7 @@
                          <button class="button run">
                             Start the game
                         </button>
-                        <button class="button uninstall">
+                        <button on:click={() => uninstallGame(game.game_id)} class="button uninstall">
                             Uninstall
                         </button>
                         </div>
