@@ -57,3 +57,62 @@ export const getUserLibrary = async (req: Request, res: Response): Promise<void>
         res.status(500).json({ message: 'Chyba při získávání knihovny.' });
     }
 };
+
+
+export const isGameInLibrary = async (req: Request, res: Response): Promise<void> => {
+    const userId = parseInt(req.params.userId, 10);
+    const gameId = parseInt(req.params.gameId, 10);
+
+    if (isNaN(userId) || isNaN(gameId)) {
+        res.status(400).json({ message: 'Neplatné parametry.' });
+        return;
+    }
+
+    try {
+        const result = await pool.query(
+            'SELECT * FROM library WHERE user_id = $1 AND game_id = $2',
+            [userId, gameId]
+        );
+    
+        if (result.rows.length > 0) {
+            res.status(200).json({ exists: true });
+        } else {
+            res.status(200).json({ exists: false });
+        }
+    } catch (error) {
+        console.error('Error during query execution:', error);
+        res.status(500).json({ message: 'Chyba serveru.' });
+    }
+};
+
+
+export const uninstallGame = async (req: Request, res: Response): Promise<void> => {
+    const userId = parseInt(req.params.userId, 10); // Získání userId z parametrů
+    const gameId = parseInt(req.params.gameId, 10); // Získání gameId z parametrů
+
+    if (isNaN(userId) || isNaN(gameId)) {
+        res.status(400).json({ message: 'Neplatné parametry.' });
+        return;
+    }
+
+    try {
+        // Zkontroluj, zda hra existuje v knihovně uživatele
+        const libraryResult = await pool.query(
+            'SELECT * FROM library WHERE user_id = $1 AND game_id = $2',
+            [userId, gameId]
+        );
+
+        if (libraryResult.rowCount === 0) {
+            res.status(404).json({ message: 'Hra nebyla nalezena v knihovně uživatele.' });
+            return;
+        }
+
+        // Odstraň hru z knihovny
+        await pool.query('DELETE FROM library WHERE user_id = $1 AND game_id = $2', [userId, gameId]);
+
+        res.status(200).json({ message: 'Hra byla úspěšně odinstalována.' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Chyba serveru.' });
+    }
+};
